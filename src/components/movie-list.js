@@ -4,7 +4,6 @@ function MovieList(props) {
 
     // function to movie to evt
     const movieClicked = movie => evt => {
-        console.log("here")
         props.movieClicked(movie)
     }
 
