@@ -3,26 +3,33 @@ import './App.css';
 import MovieList from './components/movie-list';
 import MovieDetails from './components/movie-details';
 import MovieForm from './components/movie-form';
+import { useCookies } from 'react-cookie';
+import {FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFilm } from '@fortawesome/free-solid-svg-icons'
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import {useFetch} from './hooks/useFetch';
+
 
 function App() {
 
   const [movies, setMovies] = useState([]);
   const[selectedMovie, setSelectedMovie] = useState(null);
   const[editedMovie, setEditedMovie] = useState(null);
+  const [token, setToken, deleteToken] = useCookies(['mr-token']) // movie rater token = name of cookie
+  const [data, loading, error] = useFetch();
 
 
   useEffect(()=>{
-    fetch("http://127.0.0.1:8000/api/movies/", {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Token 81e7524cbfe55a22b7133d15580b3b6baf3af7f2',
-      }
-    })
-    .then(resp => resp.json()) // fetch the response then convert to json
-    .then(resp => setMovies(resp))
-    .catch(error => console.log(error))
-  }, []) // array at end means only run effect once
+    setMovies(data) // set movies to data everytime effect runs
+  }, [data]) // array at end with data means run effect everytime data changes
+
+  // If token changes, check if token is still available
+  // redirect to auth if not present
+  useEffect(() => {
+    console.log(token);
+    if (!token['mr-token']) window.location.href = '/'
+    }, [token]
+  )
 
   // function to => movie
   // the function sets the selected movie
@@ -90,10 +97,23 @@ function App() {
     setMovies(newMovies)
   }
 
+  const logoutUser = () => {
+    deleteToken(['mr-token']);
+  }
+
+  // If loading, disp loading page
+  if (loading) return <h1>Loading...</h1>
+  
+  // If error, display errors
+  if (error) return <h1>Error loading movies: {error}</h1>
+
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Movie Rater</h1>
+        <h1> <FontAwesomeIcon icon={faFilm}/>
+          <span> Movie Rater</span>
+        </h1>
+        <FontAwesomeIcon icon={faSignOutAlt} onClick={logoutUser}/>
       </header>
       <div className="layout"> 
         <div>

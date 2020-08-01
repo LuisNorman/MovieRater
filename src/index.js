@@ -3,11 +3,27 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import {Route, BrowserRouter } from 'react-router-dom';
+import Auth from './components/auth'
+import { CookiesProvider } from 'react-cookie'
+
+function Router() {
+
+  return (
+    <React.StrictMode>
+      {/* what's ever wrapped in here will have the token context  */}
+      <CookiesProvider>
+        <BrowserRouter>
+          <Route exact path="/" component={Auth}/>
+          <Route exact path="/movies" component={App}/>
+        </BrowserRouter>
+      </CookiesProvider>
+  </React.StrictMode>
+  )
+}
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <Router/>, // get router component from above
   document.getElementById('root')
 );
 

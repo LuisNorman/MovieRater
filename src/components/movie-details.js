@@ -1,11 +1,14 @@
 import React, {useState} from 'react';
 import {FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
+import { useCookies } from 'react-cookie';
+
 
 
 function MovieDetails(props) {
 
     const [highlighted, setHighlighted] = useState(-1);
+    const [token] = useCookies(['mr-token'])
 
     let mov = props.movie;
 
@@ -17,7 +20,7 @@ function MovieDetails(props) {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Token 81e7524cbfe55a22b7133d15580b3b6baf3af7f2',
+            'Authorization': `Token ${token['mr-token']}`,
             },
             body: JSON.stringify( {stars: rate + 1} ) // send the rating to the api
             //dont have the name the function
@@ -33,7 +36,7 @@ function MovieDetails(props) {
             method: 'GET',
             headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Token 81e7524cbfe55a22b7133d15580b3b6baf3af7f2',
+            'Authorization': `Token ${token['mr-token']}`,
             },
         }).then(resp => resp.json()) // fetch the response then convert to json
         .then(resp => props.updateMovie(resp)) // call parent function to update movie. *best practice - instead of updating it in the child class
